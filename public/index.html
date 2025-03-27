@@ -4,15 +4,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>File Management</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        h1, h2, h6, p {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form, .action-buttons {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            margin-bottom: 20px;
+        }
+
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"], button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover, button:hover {
+            background-color: #3e8e41;
+        }
+
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons button {
+            background-color: #007bff;
+            margin-right: 10px;
+        }
+
+        .action-buttons button.delete {
+            background-color: #dc3545;
+        }
+
+        .action-buttons input[type="text"] {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Upload a File</h1>
-    <form action="/doc/upload" method="post" enctype="multipart/form-data">
+    <h1>File Management</h1>
+
+    <h2>Upload a File</h2>
+    <form action="/cvs/upload" method="post" enctype="multipart/form-data">
         <input type="file" name="myFile" />
         <input type="submit" value="Upload" />
     </form>
+
+    <h6>List of API</h6>
+    <a href="/cvs/">View CVS Documents</a>
+    <a href="/cvs/cv_1742924166590">Get document (GET /cvs/:id)</a>
+    <p>To delete or update a document, use the DELETE or PUT methods, respectively, with the endpoint /cvs/:id.</p>
+
 </body>
 
 </html>

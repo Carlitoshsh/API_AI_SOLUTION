@@ -10,7 +10,7 @@ app.use(json());
 app.use(express.static('public'));
 
 // Basic route
-app.use('/doc', document)
+app.use('/cvs', document)
 
 // Start the server
 app.listen(PORT, () => {
