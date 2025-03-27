@@ -1,5 +1,6 @@
 import express, { json } from 'express';
 import document from './controllers/document.js';
+import health from './controllers/health.js';
 
 const app = express();
 const PORT = 3000;
@@ -11,6 +12,7 @@ app.use(express.static('public'));
 
 // Basic route
 app.use('/cvs', document)
+app.use('/health', health)
 
 // Start the server
 app.listen(PORT, () => {
