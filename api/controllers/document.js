@@ -4,7 +4,7 @@ import ia from "../core/ia.js";
 import firebase from "../core/firebase.js";
 
 const router = express.Router();
-const COLLECTION_NAME = "cvs"
+const COLLECTION_NAME = "cvs";
 
 router.post("/", async (req, res) => {
   const prompt = req.body;
@@ -41,15 +41,17 @@ router.post("/upload", async (req, res) => {
 
       if (analysisResult) {
         const uniqueId = `cv_${Date.now()}`; // Generate unique ID using timestamp
-        const added = await firebase.addData(COLLECTION_NAME, uniqueId, analysisResult);
+        const added = await firebase.addData(
+          COLLECTION_NAME,
+          uniqueId,
+          analysisResult
+        );
 
         if (added) {
-          return res
-            .status(200)
-            .json({
-              message: "File uploaded and added to DB successfully.",
-              id: uniqueId,
-            });
+          return res.status(200).json({
+            message: "File uploaded and added to DB successfully.",
+            id: uniqueId,
+          });
         } else {
           return res
             .status(500)
@@ -62,12 +64,10 @@ router.post("/upload", async (req, res) => {
       }
     } catch (error) {
       console.error("Error during analysis:", error);
-      return res
-        .status(500)
-        .json({
-          message: "File uploaded, but analysis encountered an error.",
-          error: error,
-        });
+      return res.status(500).json({
+        message: "File uploaded, but analysis encountered an error.",
+        error: error,
+      });
     }
   });
 });
@@ -79,21 +79,21 @@ router.get("/", async (req, res) => {
     : res.status(500).json({ message: "No results recovered" });
 });
 
-router.delete('/:id', async (req, res) => {
+router.delete("/:id", async (req, res) => {
   const id = req.params.id;
   const result = await firebase.deleteData(COLLECTION_NAME, id);
   return result
     ? res.status(200).json({ message: "Document was deleted" })
     : res.status(500).json({ message: "No results recovered" });
-})
+});
 
-router.get('/:id', async (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = req.params.id;
   const result = await firebase.getData(COLLECTION_NAME, id);
   return result
     ? res.status(200).json(result)
     : res.status(500).json({ message: "No results recovered" });
-})
+});
 
 router.put("/:id", async (req, res) => {
   const id = req.params.id;
@@ -120,15 +120,17 @@ router.put("/:id", async (req, res) => {
       const analysisResult = await ia.analyzePdf(pdfFilePath);
 
       if (analysisResult) {
-        const added = await firebase.updateData(COLLECTION_NAME, id, analysisResult);
+        const added = await firebase.updateData(
+          COLLECTION_NAME,
+          id,
+          analysisResult
+        );
 
         if (added) {
-          return res
-            .status(200)
-            .json({
-              message: "File updated and added to DB successfully.",
-              id: id,
-            });
+          return res.status(200).json({
+            message: "File updated and added to DB successfully.",
+            id: id,
+          });
         } else {
           return res
             .status(500)
@@ -141,20 +143,28 @@ router.put("/:id", async (req, res) => {
       }
     } catch (error) {
       console.error("Error during analysis:", error);
-      return res
-        .status(500)
-        .json({
-          message: "File uploaded, but analysis encountered an error.",
-          error: error,
-        });
+      return res.status(500).json({
+        message: "File uploaded, but analysis encountered an error.",
+        error: error,
+      });
     }
   });
 });
 
-router.post('/recommended', async(req, res) => {
+router.post("/recommended", async (req, res) => {
   const prompt = req.body;
   const results = await firebase.getAllData(COLLECTION_NAME);
-  return await ia.getRecommendation(prompt, results);
-})
+  if (results && results.length > 0) {
+    const answer = await ia.getRecommendation(prompt, results);
+    if (!answer) {
+      return res
+        .status(500)
+        .json({ message: "CVS was found but no processed" });
+    }
+    return res.status(200).json({ recommendation: answer });
+  } else {
+    return res.status(500).json({ message: "No CVS present in DB" });
+  }
+});
 
 export default router;

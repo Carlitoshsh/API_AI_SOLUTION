@@ -22,10 +22,13 @@ async function getRecommendation(prompt, cvsResults) {
   try {
     const evaluationPrompt = `${prompt} You are a CV system. Based on the CVs provided, evaluate each CV and suggest the most suitable candidate. If no candidate is found, recommend the most qualifying person who could learn the required skill.`;
 
+    const formattedResults = cvsResults.map(cv => JSON.stringify(cv))
+    
     const result = await model.generateContent([
       evaluationPrompt,
-      ...cvsResults,
+      ...formattedResults
     ]);
+    
     const response = result.response;
     const text = response.text();
     return JSON.parse(text);
