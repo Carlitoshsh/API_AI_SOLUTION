@@ -7,17 +7,17 @@ const key = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(key);
 
 const setSchema = (_sch) => {
-    return genAI.getGenerativeModel({
-        model: "gemini-1.5-flash",
-        generationConfig: {
-          responseMimeType: "application/json",
-          responseSchema: _sch,
-        },
-      });
-}
+  return genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: _sch,
+    },
+  });
+};
 
-const cvModel = setSchema(schema)
-const recommendationModel = setSchema(recommendedPersonSchema)
+const cvModel = setSchema(schema);
+const recommendationModel = setSchema(recommendedPersonSchema);
 
 async function getDocumentData(promp) {
   const result = await cvModel.generateContent([promp]);
@@ -26,13 +26,12 @@ async function getDocumentData(promp) {
 
 async function getRecommendation(prompt, cvsResults) {
   try {
-    const evaluationPrompt = `${prompt} You are a CV system. Based on the CVs provided, evaluate each CV and suggest the most suitable candidate. If no candidate is found, recommend the most qualifying person who could learn the required skill.`;
+    const evaluationPrompt = `You are a CV system. Based on the CVs provided, evaluate each CV and suggest the most suitable candidate for the following job requirements: "${prompt}". If no perfect candidate is found, recommend the most qualifying person who possesses some of the required skills and demonstrates the ability to quickly learn the remaining skills.`;
+    const formattedResults = cvsResults.map((cv) => JSON.stringify(cv));
 
-    const formattedResults = cvsResults.map(cv => JSON.stringify(cv))
-    
     const result = await recommendationModel.generateContent([
       evaluationPrompt,
-      ...formattedResults
+      ...formattedResults,
     ]);
 
     const response = result.response;
