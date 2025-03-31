@@ -1,20 +1,26 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from "fs";
 import schema from "../scheme/ia/cv.js";
+import recommendedPersonSchema from "../scheme/ia/recommendation.js";
 
 const key = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(key);
 
-const model = genAI.getGenerativeModel({
-  model: "gemini-1.5-flash",
-  generationConfig: {
-    responseMimeType: "application/json",
-    responseSchema: schema,
-  },
-});
+const setSchema = (_sch) => {
+    return genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseSchema: _sch,
+        },
+      });
+}
+
+const cvModel = setSchema(schema)
+const recommendationModel = setSchema(recommendedPersonSchema)
 
 async function getDocumentData(promp) {
-  const result = await model.generateContent([promp]);
+  const result = await cvModel.generateContent([promp]);
   return result.response;
 }
 
@@ -24,11 +30,11 @@ async function getRecommendation(prompt, cvsResults) {
 
     const formattedResults = cvsResults.map(cv => JSON.stringify(cv))
     
-    const result = await model.generateContent([
+    const result = await recommendationModel.generateContent([
       evaluationPrompt,
       ...formattedResults
     ]);
-    
+
     const response = result.response;
     const text = response.text();
     return JSON.parse(text);
@@ -54,7 +60,7 @@ async function analyzePdf(pdfFilePath) {
       },
     ];
 
-    const result = await model.generateContent([prompt, ...imageParts]);
+    const result = await cvModel.generateContent([prompt, ...imageParts]);
     const response = result.response;
     const text = response.text();
     return JSON.parse(text);
