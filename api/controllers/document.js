@@ -152,9 +152,9 @@ router.put("/:id", async (req, res) => {
 });
 
 router.post("/recommended", async (req, res) => {
-  const prompt = req.body;
+  const prompt = req.body.prompt;
   const results = await firebase.getAllData(COLLECTION_NAME);
-  if (results && results.length > 0) {
+  if (results && results.length > 0 && prompt) {
     const answer = await ia.getRecommendation(prompt, results);
     if (!answer) {
       return res

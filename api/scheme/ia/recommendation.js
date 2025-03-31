@@ -16,6 +16,11 @@ const recommendedPersonSchema = {
       description:
         "Detailed explanation of why this person's skills and experience align with the job requirements.",
     },
+    requiredSkills: {
+      type: SchemaType.STRING,
+      description:
+        "Summary of the core skills and qualifications outlined in the recruitment prompt.",
+    },
   },
   required: ["id", "name", "description"],
 };
