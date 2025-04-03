@@ -20,7 +20,7 @@ const bestMatchJobSchema = {
       description: "A brief summary of why this job is the best match.",
     },
   },
-  required: ["jobTitle", "client", "matchScore"],
+  required: ["jobTitle", "client", "matchSkills", "summary"],
 };
 
 export default bestMatchJobSchema;
