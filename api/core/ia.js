@@ -2,6 +2,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from "fs";
 import schema from "../scheme/ia/cv.js";
 import recommendedPersonSchema from "../scheme/ia/recommendation.js";
+import bestMatchJobSchema from "../scheme/ia/jobMatch.js";
 
 const key = process.env.GEMINI_API_KEY;
 const genAI = new GoogleGenerativeAI(key);
@@ -18,6 +19,7 @@ const setSchema = (_sch) => {
 
 const cvModel = setSchema(schema);
 const recommendationModel = setSchema(recommendedPersonSchema);
+const matchJobModel = setSchema(bestMatchJobSchema)
 
 async function getDocumentData(promp) {
   const result = await cvModel.generateContent([promp]);
@@ -69,10 +71,30 @@ async function analyzePdf(pdfFilePath) {
   }
 }
 
+async function getJobMatch(prompt, jobs) {
+  try {
+    const evaluationPrompt = `You are a job system in a Consulting company. Based on the jobs provided, evaluate each job and suggest the most suitable client for the following job requirements: "${prompt}". If no perfect client is found, recommend the most nearly client who possesses some of the required skills and demonstrates the ability to adapt the remaining skills.`;
+    const formattedResults = jobs.map((job) => JSON.stringify(job));
+
+    const result = await matchJobModel.generateContent([
+      evaluationPrompt,
+      ...formattedResults,
+    ]);
+
+    const response = result.response;
+    const text = response.text();
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("Error getting recommendation:", error);
+    return null;
+  }
+}
+
 const methods = {
   getDocumentData,
   analyzePdf,
   getRecommendation,
+  getJobMatch
 };
 
 export default methods;
