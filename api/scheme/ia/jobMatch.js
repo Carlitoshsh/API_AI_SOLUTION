@@ -13,11 +13,11 @@ const bestMatchJobSchema = {
     },
     matchSkills: {
       type: SchemaType.STRING,
-      description: "Summary of skills that matches with the client",
+      description: "Summary of skills that match with the client's requirements.",
     },
     summary: {
       type: SchemaType.STRING,
-      description: "A brief summary of why this job is the best match.",
+      description: "A summary explaining why you are a strong candidate for this position, highlighting the company's potential interest in your qualifications.",
     },
   },
   required: ["jobTitle", "client", "matchSkills", "summary"],
