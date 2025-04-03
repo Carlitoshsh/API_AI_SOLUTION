@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Job Position Form</title>
+  <style>
+    label { display: block; margin-top: 10px; }
+    input, textarea, select { width: 300px; padding: 5px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 20px; }
+    #skillsContainer { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+    .skillRow { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+
+  <h2>Enter Job Position Details</h2>
+
+  <form id="jobForm" action="/open-positions/" method="POST">
+    <label for="jobTitle">Job Title:</label>
+    <input type="text" id="jobTitle" name="jobTitle" required>
+
+    <label for="client">Client:</label>
+    <input type="text" id="client" name="client" required>
+
+    <label>Skills Required:</label>
+    <div id="skillsContainer">
+      <div class="skillRow">
+        <input type="text" placeholder="Skill Name" class="skillName" required>
+        <input type="number" placeholder="Years of Experience" class="skillYears" required>
+      </div>
+    </div>
+    <button type="button" onclick="addSkill()">Add Skill</button>
+
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" rows="4" required></textarea>
+
+    <label for="typeOfInterview">Type of Interview:</label>
+    <select id="typeOfInterview" name="typeOfInterview" required>
+      <option value="">Select Interview Type</option>
+      <option value="Technical and Behavioral">Technical and Behavioral</option>
+      <option value="Case Study and Technical">Case Study and Technical</option>
+      <option value="Behavioral and Situational">Behavioral and Situational</option>
+      <option value="Portfolio Review and Behavioral">Portfolio Review and Behavioral</option>
+      <option value="Technical and System Design">Technical and System Design</option>
+    </select>
+
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    function addSkill() {
+      const skillsContainer = document.getElementById('skillsContainer');
+      const newSkillRow = document.createElement('div');
+      newSkillRow.className = 'skillRow';
+      newSkillRow.innerHTML = `
+        <input type="text" placeholder="Skill Name" class="skillName" required>
+        <input type="number" placeholder="Years of Experience" class="skillYears" required>
+      `;
+      skillsContainer.appendChild(newSkillRow);
+    }
+
+    //The form submission is now handled by the form's action and method attributes.
+    // the javascript that handled submission has been removed.
+  </script>
+
+</body>
+</html>
